@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personagem 3D&T</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="sheet">
+        <div class="photo-square">Foto do Personagem</div>
+        <h1>Ficha do Personagem</h1>
+        <form id="characterForm">
+            <section class="character-info">
+                <h2>Informações Básicas</h2>
+                <label for="nome">Nome do Personagem:</label>
+                <input type="text" id="nome" name="nome" required><br>
+                
+                <label for="raca">Raça:</label>
+                <select id="raca" name="raca" required>
+                    <option value="">Selecione</option>
+                    <option value="Humano">Humano</option>
+                    <option value="Elfo">Elfo</option>
+                    <option value="Tiefling">Tiefling</option>
+                    <option value="Drow">Drow</option>
+                    <option value="Githyanki">Githyanki</option>
+                    <option value="Anão">Anão</option>
+                    <option value="Meio-Elfo">Meio-Elfo</option>
+                    <option value="Pequenino">Pequenino</option>
+                    <option value="Gnômico">Gnômico</option>
+                    <option value="Dragonborn">Dragonborn</option>
+                    <option value="Meio-Orc">Meio-Orc</option>
+                </select><br>
+                
+                <label for="subraca">Subraça:</label>
+                <select id="subraca" name="subraca" required>
+                    <option value="">Selecione Raça Primeiro</option>
+                </select><br>
+                
+                <label for="classe">Classe:</label>
+                <select id="classe" name="classe">
+                    <option value="">Selecione</option>
+                    <option value="Clérigo">Clérigo</option>
+                    <option value="Bárbaro">Bárbaro</option>
+                    <option value="Soldado">Soldado</option>
+                    <option value="Paladino">Paladino</option>
+                    <option value="Ladino">Ladino</option>
+                    <option value="Caçador">Caçador</option>
+                    <option value="Mago">Mago</option>
+                    <option value="Monge">Monge</option>
+                    <option value="Bardo">Bardo</option>
+                </select><br>
+
+                <label for="nivel">Nível:</label>
+                <input type="number" id="nivel" name="nivel" min="1" value="1"><br>
+
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade" name="idade" min="18" value="18"><br>
+
+                <label for="foto">Foto do Personagem:</label>
+                <input type="file" id="foto" name="foto" accept="image/*"><br>
+            </section>
+
+            <section class="atributos">
+                <h2>Atributos</h2>
+                <p>Distribua 100 pontos + 1 por nível entre os atributos. Mínimo 5, máximo 18 (exceto bônus de nível).</p>
+                <div class="atributo">
+                    <label for="forca">Força (FOR):</label>
+                    <input type="number" id="forca" name="forca" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="destreza">Destreza (DES):</label>
+                    <input type="number" id="destreza" name="destreza" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="constituicao">Constituição (CON):</label>
+                    <input type="number" id="constituicao" name="constituicao" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="agilidade">Agilidade (AGI):</label>
+                    <input type="number" id="agilidade" name="agilidade" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="inteligencia">Inteligência (INT):</label>
+                    <input type="number" id="inteligencia" name="inteligencia" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="forcaVontade">Força de Vontade (FV):</label>
+                    <input type="number" id="forcaVontade" name="forcaVontade" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="carisma">Carisma (CAR):</label>
+                    <input type="number" id="carisma" name="carisma" min="5" max="18" value="5">
+                </div>
+                <div class="atributo">
+                    <label for="percepcao">Percepção (PER):</label>
+                    <input type="number" id="percepcao" name="percepcao" min="5" max="18" value="5">
+                </div>
+                <p id="totalPoints">Total de Pontos Usados: 0 / 100</p>
+            </section>
+
+            <section class="calculations">
+                <h2>Cálculos Automáticos</h2>
+                <p id="vidaMaxima">Vida Máxima: 0</p>
+                <p id="dinheiro">Dinheiro Inicial: 0 moedas de ouro</p>
+                <p id="pontosPericias">Pontos de Perícias: 0</p>
+                <button type="button" id="rollDinheiro">Rolar Dinheiro</button>
+            </section>
+
+            <section class="mago-section" id="magoSection" style="display: none;">
+                <h2>Habilidades Arcanas (Mago)</h2>
+                <p>Distribua <span id="focusPoints">1</span> pontos de FOCUS entre formas e elementos. Nenhum foco pode ser maior que o principal.</p>
+                <label for="elementoPrincipal">Elemento Principal:</label>
+                <select id="elementoPrincipal" name="elementoPrincipal">
+                    <option value="">Selecione</option>
+                    <option value="fogo">Fogo</option>
+                    <option value="água">Água</option>
+                    <option value="terra">Terra</option>
+                    <option value="ar">Ar</option>
+                    <option value="luz">Luz</option>
+                    <option value="trevas">Trevas</option>
+                    <option value="humanos">Humanos</option>
+                    <option value="animais">Animais</option>
+                    <option value="plantas">Plantas</option>
+                    <option value="spiritus">Spiritus</option>
+                    <option value="arkanum">Arkanum</option>
+                </select><br>
+                <p>Nota: Não pode escolher o elemento oposto ao principal (ex.: Fogo não combina com Água, Gelo; Água não combina com Fogo, etc.).</p>
+                <h3>Formas de Manipulação</h3>
+                <div class="atributo">
+                    <label for="entender">Entender:</label>
+                    <input type="number" id="entender" name="entender" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="criar">Criar:</label>
+                    <input type="number" id="criar" name="criar" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="manipular">Manipular:</label>
+                    <input type="number" id="manipular" name="manipular" min="0" value="0">
+                </div>
+                <h3>Elementos</h3>
+                <div class="atributo">
+                    <label for="fogo">Fogo:</label>
+                    <input type="number" id="fogo" name="fogo" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="agua">Água:</label>
+                    <input type="number" id="agua" name="agua" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="terra">Terra:</label>
+                    <input type="number" id="terra" name="terra" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="ar">Ar:</label>
+                    <input type="number" id="ar" name="ar" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="luz">Luz:</label>
+                    <input type="number" id="luz" name="luz" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="trevas">Trevas:</label>
+                    <input type="number" id="trevas" name="trevas" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="humanos">Humanos:</label>
+                    <input type="number" id="humanos" name="humanos" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="animais">Animais:</label>
+                    <input type="number" id="animais" name="animais" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="plantas">Plantas:</label>
+                    <input type="number" id="plantas" name="plantas" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="spiritus">Spiritus:</label>
+                    <input type="number" id="spiritus" name="spiritus" min="0" value="0">
+                </div>
+                <div class="atributo">
+                    <label for="arkanum">Arkanum:</label>
+                    <input type="number" id="arkanum" name="arkanum" min="0" value="0">
+                </div>
+                <p id="focusUsed">Pontos de FOCUS Usados: 0</p>
+            </section>
+
+            <section class="historia">
+                <h2>História do Personagem</h2>
+                <textarea id="historia" name="historia" rows="10" cols="50"></textarea>
+            </section>
+
+            <section class="equipamentos">
+                <h2>Equipamentos</h2>
+                <textarea id="equipamentos" name="equipamentos" rows="5" cols="50"></textarea>
+            </section>
+
+            <button type="button" id="submitBtn">Enviar Ficha por E-mail</button>
+        </form>
+    </div>
+
+    <script>
+        const raceSubraces = {
+            'Humano': ['Normal'],
+            'Elfo': ['Alto', 'Floresta'],
+            'Tiefling': ['Asmodeus', 'Mephistopheles', 'Zariel'],
+            'Drow': ['Juramentado de Loth', 'Seldarine'],
+            'Githyanki': ['Nenhuma'],
+            'Anão': ['Dourado', 'Escudo', 'Duregar'],
+            'Meio-Elfo': ['Alto', 'Floresta', 'Drow'],
+            'Pequenino': ['Pés Leves', 'Coração Forte'],
+            'Gnômico': ['Rocha', 'Floresta', 'Profundo'],
+            'Dragonborn': ['Negro', 'Azul', 'Bronze', 'Cobre', 'Dourado', 'Verde', 'Vermelho', 'Prateado', 'Branco'],
+            'Meio-Orc': ['Nenhuma']
+        };
+
+        const raceBonuses = {
+            'Humano': { forca: 0, destreza: 0, constituicao: 0, agilidade: 0, inteligencia: 0, forcaVontade: 0, carisma: 0, percepcao: 0, special: 'Habilidade adicional proficiente' },
+            'Elfo': {
+                'Alto': { inteligencia: 1, special: 'Slot adicional de Cantrip' },
+                'Floresta': { destreza: 1, special: 'Velocidade +1.5m' }
+            },
+            'Tiefling': {
+                'Asmodeus': { inteligencia: 1, special: 'Cantrip Chama Produtiva' },
+                'Mephistopheles': { inteligencia: 1, special: 'Cantrip Mão do Mago' },
+                'Zariel': { carisma: 1, special: 'Cantrip Tumulto' }
+            },
+            'Drow': {
+                'Juramentado de Loth': { carisma: 1 },
+                'Seldarine': { carisma: 1 }
+            },
+            'Githyanki': { inteligencia: 1, special: 'Conhecimento Astral, Psiónica Githyanki' },
+            'Anão': {
+                'Dourado': { constituicao: 1, special: 'Resistência Anã' },
+                'Escudo': { constituicao: 1, special: 'Treino em Armadura' },
+                'Duregar': { forcaVontade: 1, special: 'Visão Noturna Superior, Resiliência Duregar' }
+            },
+            'Meio-Elfo': {
+                'Alto': { carisma: 1, special: 'Espaço Extra para Cantrip' },
+                'Floresta': { destreza: 1, special: 'Agilidade Natural' },
+                'Drow': { carisma: 1, special: 'Cantrip Luz Dançante' }
+            },
+            'Pequenino': {
+                'Pés Leves': { destreza: 1, special: 'Furtividade Natural' },
+                'Coração Forte': { constituicao: 1, special: 'Resiliência do Coração Forte' }
+            },
+            'Gnômico': {
+                'Rocha': { constituicao: 1, special: 'Sabedoria do Artífice' },
+                'Floresta': { destreza: 1, special: 'Feitiço Falar com Animais' },
+                'Profundo': { destreza: 1, special: 'Camuflagem de Pedra' }
+            },
+            'Dragonborn': {
+                'Negro': { forca: 1, special: 'Sopro de Ácido, Resistência a Ácido' },
+                'Azul': { forca: 1, special: 'Sopro de Relâmpago, Resistência a Relâmpago' },
+                'Bronze': { forca: 1, special: 'Sopro de Fogo, Resistência a Fogo' },
+                'Cobre': { forca: 1, special: 'Sopro de Ácido, Resistência a Ácido' },
+                'Dourado': { forca: 1, special: 'Sopro de Fogo, Resistência a Fogo' },
+                'Verde': { forca: 1, special: 'Sopro de Veneno, Resistência a Veneno' },
+                'Vermelho': { forca: 1, special: 'Sopro de Fogo, Resistência a Fogo' },
+                'Prateado': { forca: 1, special: 'Sopro de Gelo, Resistência a Gelo' },
+                'Branco': { forca: 1, special: 'Sopro de Gelo, Resistência a Gelo' }
+            },
+            'Meio-Orc': { forca: 1, constituicao: 1 }
+        };
+
+        document.getElementById('raca').addEventListener('change', function() {
+            const race = this.value;
+            const subraceSelect = document.getElementById('subraca');
+            subraceSelect.innerHTML = '<option value="">Selecione</option>';
+            if (raceSubraces[race]) {
+                raceSubraces[race].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subraceSelect.appendChild(option);
+                });
+            }
+        });
+
+        document.getElementById('subraca').addEventListener('change', updateBonuses);
+        document.getElementById('nivel').addEventListener('input', updatePoints);
+        document.getElementById('idade').addEventListener('input', function() {
+            if (parseInt(this.value) < 18) {
+                this.value = 18;
+            }
+        });
+        ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
+            document.getElementById(attr).addEventListener('input', updatePoints);
+        });
+
+        function updateBonuses() {
+            const race = document.getElementById('raca').value;
+            const subrace = document.getElementById('subraca').value;
+            const bonusesDiv = document.getElementById('bonuses');
+            bonusesDiv.innerHTML = '';
+            if (raceBonuses[race]) {
+                let bonuses = raceBonuses[race];
+                if (typeof bonuses === 'object' && !bonuses.forca) {
+                    bonuses = bonuses[subrace] || {};
+                }
+                for (const [key, value] of Object.entries(bonuses)) {
+                    if (key !== 'special') {
+                        const attr = document.getElementById(key);
+                        attr.value = Math.min(18, parseInt(attr.value) + value);
+                    }
+                }
+                if (bonuses.special) {
+                    bonusesDiv.innerHTML = `<p>Bônus Especial: ${bonuses.special}</p>`;
+                }
+            }
+            updatePoints();
+        }
+
+        function updatePoints() {
+            const nivel = parseInt(document.getElementById('nivel').value) || 1;
+            const totalBase = 100 + (nivel - 1);
+            let used = 0;
+            ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
+                used += Math.max(0, parseInt(document.getElementById(attr).value) - 5);
+            });
+            document.getElementById('totalPoints').textContent = `Total de Pontos Usados: ${used} / ${totalBase}`;
+            if (used > totalBase) {
+                document.getElementById('totalPoints').style.color = 'red';
+            } else {
+                document.getElementById('totalPoints').style.color = 'black';
+            }
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const form = document.getElementById('characterForm');
+            if (!form.checkValidity()) {
+                alert('Preencha todos os campos obrigatórios.');
+                return;
+            }
+            const data = new FormData(form);
+            let body = 'Ficha de Personagem:\n\n';
+            for (const [key, value] of data.entries()) {
+                if (key !== 'foto') {
+                    body += `${key}: ${value}\n`;
+                }
+            }
+            body += '\nAnexe a foto do personagem.';
+            const email = 'miguelmkfaga@gmail.com';
+            const subject = 'Nova Ficha de Personagem';
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        });
+    </script>
+</body>
+</html>
