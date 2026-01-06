@@ -46,8 +46,8 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border: 3px solid #8b4513;
     background-color: #2c1810;
     display: flex;
@@ -141,8 +141,8 @@ section {
 
     .photo-square {
         position: static;
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         margin: 0 auto 10px;
         font-size: 10px;
     }

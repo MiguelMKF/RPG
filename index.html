@@ -402,8 +402,9 @@
             const subraca = document.getElementById('subraca').value;
             const isElfoDrow = raca === 'Elfo' || (raca === 'Drow' && subraca);
             const isPaladino = classe === 'Paladino';
+            const isClerigo = classe === 'Clérigo';
             const isMagic = classe === 'Mago' || classe === 'Bardo';
-            const hasBoth = isElfoDrow || isPaladino;
+            const hasBoth = isElfoDrow || isPaladino || isClerigo;
             const basePoints = 10 + 3 * Math.floor(nivel / 2);
             let pontosMana = 0;
             let pontosEnergia = 0;
@@ -412,10 +413,14 @@
                 pontosEnergia = Math.floor(basePoints / 2);
             } else if (isMagic) {
                 pontosMana = basePoints;
+                if (classe === 'Mago') {
+                    pontosEnergia = 2;
+                }
             } else {
                 pontosEnergia = basePoints;
             }
-            document.getElementById('pontosMana').textContent = `Pontos de Mana: ${pontosMana}`;
+            const manaText = pontosMana > 0 ? `Mana Máxima: ${pontosMana}` : 'Mana: Não possui';
+            document.getElementById('pontosMana').textContent = manaText;
             document.getElementById('pontosEnergia').textContent = `Pontos de Energia: ${pontosEnergia}`;
         }
 
