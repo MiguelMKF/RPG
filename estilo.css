@@ -3,9 +3,10 @@ body {
     font-family: 'Times New Roman', serif;
     color: #d4af37;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background-image: radial-gradient(circle, rgba(0,0,0,0.3) 1px, transparent 1px);
     background-size: 20px 20px;
+    font-size: 16px;
 }
 
 .sheet {
@@ -61,6 +62,7 @@ h1, h2 {
     text-align: center;
     color: #daa520;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    margin: 10px 0;
 }
 
 label {
@@ -68,26 +70,124 @@ label {
     width: 150px;
     margin-right: 10px;
     color: #f4a460;
+    font-weight: bold;
 }
 
 input, textarea, select {
     margin-bottom: 10px;
-    padding: 5px;
+    padding: 8px;
     border: 2px solid #8b4513;
     background-color: #4b2f20;
     color: #d4af37;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    font-size: 16px;
+    width: calc(100% - 170px);
+    box-sizing: border-box;
 }
 
 .atributo {
-    flex: 1 1 45%;
+    display: flex;
+    align-items: center;
     margin-bottom: 10px;
+}
+
+.atributo label {
+    width: auto;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+.atributo input {
+    flex: 1;
+    width: auto;
 }
 
 section {
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #8b4513;
     background-color: rgba(61,40,23,0.5);
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.atributos .atributo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.atributos .atributo label {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.atributos .atributo input {
+    width: 100%;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    body {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    .sheet {
+        padding: 10px;
+        max-width: 100%;
+        clip-path: none; /* Remove clip-path para evitar cortes em mobile */
+        border-radius: 10px;
+    }
+
+    .photo-square {
+        position: static;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 10px;
+        font-size: 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    label {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .atributo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .atributo label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .atributo input {
+        width: 100%;
+    }
+
+    section {
+        padding: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+    }
 }

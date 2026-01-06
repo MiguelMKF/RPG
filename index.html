@@ -63,7 +63,7 @@
 
             <section class="atributos">
                 <h2>Atributos</h2>
-                <p>Distribua 100 pontos + 1 por nível entre os atributos. Mínimo 5, máximo 18 (exceto bônus de nível).</p>
+                <p>Distribua 100 pontos + 1 por nível (incluindo nível 1) entre os atributos (incluindo os 5 mínimos). Mínimo 5, máximo 18 (exceto bônus de nível).</p>
                 <div class="atributo">
                     <label for="forca">Força (FOR):</label>
                     <input type="number" id="forca" name="forca" min="5" max="18" value="5">
@@ -97,13 +97,17 @@
                     <input type="number" id="percepcao" name="percepcao" min="5" max="18" value="5">
                 </div>
                 <p id="totalPoints">Total de Pontos Usados: 0 / 100</p>
+                <p id="bonusPoints">Bônus Raciais Aplicados: Nenhum</p>
+                <div id="bonuses"></div>
             </section>
 
             <section class="calculations">
                 <h2>Cálculos Automáticos</h2>
                 <p id="vidaMaxima">Vida Máxima: 0</p>
-                <p id="dinheiro">Dinheiro Inicial: 0 moedas de ouro</p>
+                <p id="dinheiro">Dinheiro Inicial: 0 Florins</p>
                 <p id="pontosPericias">Pontos de Perícias: 0</p>
+                <p id="pontosMana">Pontos de Mana: 0</p>
+                <p id="pontosEnergia">Pontos de Energia: 0</p>
                 <button type="button" id="rollDinheiro">Rolar Dinheiro</button>
             </section>
 
@@ -268,6 +272,9 @@
         document.getElementById('raca').addEventListener('change', function() {
             const race = this.value;
             const subraceSelect = document.getElementById('subraca');
+            // Temporarily remove subrace listener to avoid calling updateBonuses with empty subrace
+            const tempListener = updateBonuses;
+            subraceSelect.removeEventListener('change', tempListener);
             subraceSelect.innerHTML = '<option value="">Selecione</option>';
             if (raceSubraces[race]) {
                 raceSubraces[race].forEach(sub => {
@@ -276,49 +283,106 @@
                     option.textContent = sub;
                     subraceSelect.appendChild(option);
                 });
+                subraceSelect.value = raceSubraces[race][0] || '';
             }
+            subraceSelect.addEventListener('change', tempListener);
+            updateBonuses();
         });
 
+        document.getElementById('raca').addEventListener('change', updateBonuses);
         document.getElementById('subraca').addEventListener('change', updateBonuses);
         document.getElementById('nivel').addEventListener('input', updatePoints);
+        document.getElementById('classe').addEventListener('change', updatePoints);
         document.getElementById('idade').addEventListener('input', function() {
             if (parseInt(this.value) < 18) {
                 this.value = 18;
             }
         });
         ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
-            document.getElementById(attr).addEventListener('input', updatePoints);
+            const input = document.getElementById(attr);
+            input.addEventListener('input', function() {
+                let val = parseInt(this.value);
+                if (isNaN(val)) val = 5;
+                const minEfetivo = 5 + (currentBonuses[attr] || 0);
+                if (val < minEfetivo) val = minEfetivo;
+                if (val > 18) val = 18;
+                const oldVal = parseInt(this.dataset.oldValue) || minEfetivo;
+                this.dataset.oldValue = val;
+                // Calcular used temporário com novo val
+                const nivel = parseInt(document.getElementById('nivel').value) || 1;
+                const totalBase = 100 + nivel;
+                let tempUsed = 0;
+                ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(a => {
+                    const elem = document.getElementById(a);
+                    if (a === attr) {
+                        tempUsed += val;
+                    } else {
+                        tempUsed += parseInt(elem.value) || 5;
+                    }
+                });
+                if (tempUsed > totalBase) {
+                    this.value = oldVal;
+                    alert('Limite de pontos atingido! Diminua outro atributo antes de aumentar este.');
+                } else {
+                    this.value = val;
+                }
+                updatePoints();
+            });
         });
+
+        let currentBonuses = {};
 
         function updateBonuses() {
             const race = document.getElementById('raca').value;
             const subrace = document.getElementById('subraca').value;
             const bonusesDiv = document.getElementById('bonuses');
+            const bonusPointsP = document.getElementById('bonusPoints');
             bonusesDiv.innerHTML = '';
+            let bonusText = 'Bônus Raciais Aplicados: ';
+            // Remover bônus anteriores
+            for (const [key, value] of Object.entries(currentBonuses)) {
+                if (key !== 'special') {
+                    const attr = document.getElementById(key);
+                    attr.value = Math.max(5, (parseInt(attr.value) || 5) - value);
+                    attr.dispatchEvent(new Event('change', { bubbles: true }));
+                    attr.dataset.oldValue = attr.value;
+                }
+            }
+            currentBonuses = {};
             if (raceBonuses[race]) {
                 let bonuses = raceBonuses[race];
                 if (typeof bonuses === 'object' && !bonuses.forca) {
                     bonuses = bonuses[subrace] || {};
                 }
+                const appliedBonuses = [];
                 for (const [key, value] of Object.entries(bonuses)) {
                     if (key !== 'special') {
+                        currentBonuses[key] = value;
                         const attr = document.getElementById(key);
-                        attr.value = Math.min(18, parseInt(attr.value) + value);
+                        attr.value = Math.min(18, (parseInt(attr.value) || 5) + value);
+                        attr.dispatchEvent(new Event('change', { bubbles: true }));
+                        attr.dataset.oldValue = attr.value;
+                        appliedBonuses.push(`${key}: +${value}`);
                     }
                 }
+                bonusText += appliedBonuses.length > 0 ? appliedBonuses.join(', ') : 'Nenhum';
                 if (bonuses.special) {
                     bonusesDiv.innerHTML = `<p>Bônus Especial: ${bonuses.special}</p>`;
+                    currentBonuses.special = bonuses.special;
                 }
+            } else {
+                bonusText += 'Nenhum';
             }
+            bonusPointsP.textContent = bonusText;
             updatePoints();
         }
 
         function updatePoints() {
             const nivel = parseInt(document.getElementById('nivel').value) || 1;
-            const totalBase = 100 + (nivel - 1);
+            const totalBase = 100 + nivel;
             let used = 0;
             ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
-                used += Math.max(0, parseInt(document.getElementById(attr).value) - 5);
+                used += parseInt(document.getElementById(attr).value) || 5;
             });
             document.getElementById('totalPoints').textContent = `Total de Pontos Usados: ${used} / ${totalBase}`;
             if (used > totalBase) {
@@ -326,6 +390,33 @@
             } else {
                 document.getElementById('totalPoints').style.color = 'black';
             }
+            // Calcular Vida Máxima
+            const forca = parseInt(document.getElementById('forca').value) || 5;
+            const constituicao = parseInt(document.getElementById('constituicao').value) || 5;
+            const vidaBase = Math.ceil((forca + constituicao) / 2);
+            const vidaMaxima = vidaBase + nivel;
+            document.getElementById('vidaMaxima').textContent = `Vida Máxima: ${vidaMaxima}`;
+            // Calcular Pontos de Mana e Energia
+            const classe = document.getElementById('classe').value;
+            const raca = document.getElementById('raca').value;
+            const subraca = document.getElementById('subraca').value;
+            const isElfoDrow = raca === 'Elfo' || (raca === 'Drow' && subraca);
+            const isPaladino = classe === 'Paladino';
+            const isMagic = classe === 'Mago' || classe === 'Bardo';
+            const hasBoth = isElfoDrow || isPaladino;
+            const basePoints = 10 + 3 * Math.floor(nivel / 2);
+            let pontosMana = 0;
+            let pontosEnergia = 0;
+            if (hasBoth) {
+                pontosMana = Math.floor(basePoints / 2);
+                pontosEnergia = Math.floor(basePoints / 2);
+            } else if (isMagic) {
+                pontosMana = basePoints;
+            } else {
+                pontosEnergia = basePoints;
+            }
+            document.getElementById('pontosMana').textContent = `Pontos de Mana: ${pontosMana}`;
+            document.getElementById('pontosEnergia').textContent = `Pontos de Energia: ${pontosEnergia}`;
         }
 
         document.getElementById('submitBtn').addEventListener('click', function() {
@@ -345,6 +436,23 @@
             const email = 'miguelmkfaga@gmail.com';
             const subject = 'Nova Ficha de Personagem';
             window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        });
+
+        document.getElementById('rollDinheiro').addEventListener('click', function() {
+            let sum = 0;
+            for (let i = 0; i < 4; i++) {
+                sum += Math.floor(Math.random() * 6) + 1;
+            }
+            const dinheiro = sum * 100;
+            document.getElementById('dinheiro').textContent = `Dinheiro Inicial: ${dinheiro} Florins`;
+        });
+
+        updatePoints();
+
+        // Inicializar oldValue
+        ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
+            const minEfetivo = 5 + (currentBonuses[attr] || 0);
+            document.getElementById(attr).dataset.oldValue = document.getElementById(attr).value || minEfetivo;
         });
     </script>
 </body>
