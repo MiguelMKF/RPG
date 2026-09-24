@@ -135,7 +135,7 @@ section {
     .sheet {
         padding: 10px;
         max-width: 100%;
-        clip-path: none; /* Remove clip-path para evitar cortes em mobile */
+        clip-path: none;
         border-radius: 10px;
     }
 
