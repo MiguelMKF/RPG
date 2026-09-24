@@ -125,7 +125,6 @@ section {
     width: 100%;
 }
 
-/* Responsividade para mobile */
 @media (max-width: 768px) {
     body {
         padding: 5px;
