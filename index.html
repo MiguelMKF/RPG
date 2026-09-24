@@ -272,7 +272,6 @@
         document.getElementById('raca').addEventListener('change', function() {
             const race = this.value;
             const subraceSelect = document.getElementById('subraca');
-            // Temporarily remove subrace listener to avoid calling updateBonuses with empty subrace
             const tempListener = updateBonuses;
             subraceSelect.removeEventListener('change', tempListener);
             subraceSelect.innerHTML = '<option value="">Selecione</option>';
@@ -308,7 +307,6 @@
                 if (val > 18) val = 18;
                 const oldVal = parseInt(this.dataset.oldValue) || minEfetivo;
                 this.dataset.oldValue = val;
-                // Calcular used temporário com novo val
                 const nivel = parseInt(document.getElementById('nivel').value) || 1;
                 const totalBase = 100 + nivel;
                 let tempUsed = 0;
@@ -339,7 +337,6 @@
             const bonusPointsP = document.getElementById('bonusPoints');
             bonusesDiv.innerHTML = '';
             let bonusText = 'Bônus Raciais Aplicados: ';
-            // Remover bônus anteriores
             for (const [key, value] of Object.entries(currentBonuses)) {
                 if (key !== 'special') {
                     const attr = document.getElementById(key);
@@ -362,7 +359,7 @@
                         attr.value = Math.min(18, (parseInt(attr.value) || 5) + value);
                         attr.dispatchEvent(new Event('change', { bubbles: true }));
                         attr.dataset.oldValue = attr.value;
-                        appliedBonuses.push(`${key}: +${value}`);
+                        appliedBonuses.push(`\( {key}: + \){value}`);
                     }
                 }
                 bonusText += appliedBonuses.length > 0 ? appliedBonuses.join(', ') : 'Nenhum';
@@ -390,13 +387,11 @@
             } else {
                 document.getElementById('totalPoints').style.color = 'black';
             }
-            // Calcular Vida Máxima
             const forca = parseInt(document.getElementById('forca').value) || 5;
             const constituicao = parseInt(document.getElementById('constituicao').value) || 5;
             const vidaBase = Math.ceil((forca + constituicao) / 2);
             const vidaMaxima = vidaBase + nivel;
             document.getElementById('vidaMaxima').textContent = `Vida Máxima: ${vidaMaxima}`;
-            // Calcular Pontos de Mana e Energia
             const classe = document.getElementById('classe').value;
             const raca = document.getElementById('raca').value;
             const subraca = document.getElementById('subraca').value;
@@ -440,7 +435,7 @@
             body += '\nAnexe a foto do personagem.';
             const email = 'miguelmkfaga@gmail.com';
             const subject = 'Nova Ficha de Personagem';
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = `mailto:\( {email}?subject= \){encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         });
 
         document.getElementById('rollDinheiro').addEventListener('click', function() {
@@ -454,7 +449,6 @@
 
         updatePoints();
 
-        // Inicializar oldValue
         ['forca', 'destreza', 'constituicao', 'agilidade', 'inteligencia', 'forcaVontade', 'carisma', 'percepcao'].forEach(attr => {
             const minEfetivo = 5 + (currentBonuses[attr] || 0);
             document.getElementById(attr).dataset.oldValue = document.getElementById(attr).value || minEfetivo;
